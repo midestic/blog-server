@@ -1,18 +1,92 @@
+// require("dotenv").config();
+// const express = require("express");
+// const mongoose = require("mongoose");
+// const cors = require("cors");
+
+// const app = express();
+
+// app.use(cors());
+
+// const PORT = 5000;
+
+// app.use(express.json());
+
+// app.get("/", (req, res) => {
+//   res.send("Hello from Express 🚀");
+// });
+
+// const mongoURI = process.env.MONGODB_URI;
+
+// const dns = require("dns");
+// dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
+// async function startServer() {
+//   try {
+//     await mongoose.connect(mongoURI);
+//     console.log("Connected to MongoDB Atlas!");
+
+//     app.listen(PORT, () => {
+//       console.log(`Server running on port ${PORT}`);
+//     });
+//   } catch (err) {
+//     console.error("Failed to start server:", err);
+//     process.exit(1);
+//   }
+// }
+
+// mongoose.connection.on("disconnected", () => {
+//   console.log("MongoDB disconnected");
+// });
+
+// mongoose.connection.on("error", (err) => {
+//   console.error("MongoDB error:", err);
+// });
+
+// startServer();
+
+require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
+const postRoutes = require("./routes/posts");
 
 const app = express();
 
 app.use(cors());
+app.use(express.json());
 
 const PORT = 5000;
-
-app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Hello from Express 🚀");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.use("/posts", postRoutes);
+
+const mongoURI = process.env.MONGODB_URI;
+
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
+async function startServer() {
+  try {
+    await mongoose.connect(mongoURI);
+    console.log("Connected to MongoDB Atlas!");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Failed to start server:", err);
+    process.exit(1);
+  }
+}
+
+mongoose.connection.on("disconnected", () => {
+  console.log("MongoDB disconnected");
 });
+
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB error:", err);
+});
+
+startServer();
